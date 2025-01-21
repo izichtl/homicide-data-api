@@ -1,8 +1,6 @@
 import swaggerJsdoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 import { Express } from 'express';
-import * as fs from 'fs';
-import * as path from 'path';
 
 const options: swaggerJsdoc.Options = {
   definition: {
@@ -14,13 +12,11 @@ const options: swaggerJsdoc.Options = {
     },
     servers: [
       {
-        url: 'http://localhost:3000',
-        description: 'Development server',
-      },
-      {
-        url: 'https://your-production-url.vercel.app',
-        description: 'Production server',
-      },
+        url: process.env.NODE_ENV === 'production' 
+          ? process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://your-production-url.vercel.app'
+          : 'http://localhost:3000',
+        description: process.env.NODE_ENV === 'production' ? 'Production server' : 'Development server',
+      }
     ],
     components: {
       securitySchemes: {
@@ -38,17 +34,12 @@ const options: swaggerJsdoc.Options = {
   apis: ['./src/routes/*.ts', './src/models/*.ts'], // Path to the API docs
 };
 
-const swaggerSpec = swaggerJsdoc(options);
-
 export const setupSwagger = (app: Express) => {
-    const swaggerFile = path.join(process.cwd(), 'swagger.json');
-    if (fs.existsSync(swaggerFile)) {
-        const swaggerDocument = JSON.parse(fs.readFileSync(swaggerFile, 'utf8'));
-        app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+    try {
+        const swaggerSpec = swaggerJsdoc(options);
+        app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
         console.log('✅ Swagger UI available at /api-docs');
-    } else {
-        console.warn('⚠️ swagger.json not found. Run generate-swagger.sh to generate it.');
+    } catch (error) {
+        console.error('❌ Error setting up Swagger:', error);
     }
-};
-
-export default swaggerSpec; 
+}; 
