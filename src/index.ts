@@ -28,5 +28,6 @@ app.get('/', (req: Request, res: Response) => {
   res.json({ message: 'Hello from TypeScript Express!' });
 });
 
+console.log(process.env);
 // Start server with banner
 startServer(app, port);

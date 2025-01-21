@@ -29,7 +29,6 @@ function printBanner(text: string): void {
 
 export function startServer(app: Express, port: number): void {
     app.listen(port, () => {
-        console.clear();
         console.log('\n');
         printBanner(banner);
         console.log('\n');
