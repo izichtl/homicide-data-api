@@ -6,7 +6,6 @@ const swaggerUICss =
 import swaggerDocument from "../../swagger.json";
 
 export const setupSwagger = (app: Express) => {
-  console.log(process.env);
   try {
     app.use(
       "/api-docs",
@@ -16,7 +15,7 @@ export const setupSwagger = (app: Express) => {
           ? JSON.parse(
               JSON.stringify(swaggerDocument).replace(
                 "http://localhost:3000",
-                process.env.VERCEL_URL || ""
+                process.env.API_URL || ""
               )
             )
           : swaggerDocument,
