@@ -4,6 +4,7 @@ import connectDB from './config/database';
 import userRoutes from './routes/userRoutes';
 import { setupSwagger } from './config/swagger';
 import { startServer } from './utils/banner';
+import cors from 'cors';
 
 // Load environment variables from .env file
 dotenv.config();
@@ -16,6 +17,10 @@ connectDB();
 
 // Middleware to parse JSON bodies
 app.use(express.json());
+
+// CORS configuration
+
+app.use(cors());
 
 // Setup Swagger UI
 setupSwagger(app);
