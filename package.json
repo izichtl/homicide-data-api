@@ -7,6 +7,7 @@
     "build": "tsc",
     "start:prod": "node dist/index.js",
     "start": "nodemon src/index.ts",
+    "dev": "nodemon src/index.ts",
     "vercel:deploy": "vercel --prod"
   },
   "author": "",
