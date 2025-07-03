@@ -44,3 +44,62 @@ console.log("Query final MongoDB:", filter);
   }
 };
 
+export const getTaxaHomicidiosPorRegiao = async (req: Request, res: Response) => {
+  try {
+    console.log("Iniciando consulta de taxas de homicídio por região");
+    const pipeline1: any[] = [
+  {
+    $match: {
+      regiao: { $in: ['Norte', 'Nordeste', 'Sudeste', 'Sul', 'Centro-Oeste'] },
+      taxa_uf: { $ne: null }
+    }
+  },
+  {
+    $group: {
+      _id: { regiao: '$regiao', ano: '$ano' },
+      media_taxa: { $avg: '$taxa_uf' }
+    }
+  },
+  {
+    $project: {
+      _id: 0,
+      regiao: '$_id.regiao',
+      ano: '$_id.ano',
+      taxa_homicidio: { $round: ['$media_taxa', 2] }
+    }
+  },
+  {
+    $sort: {
+      regiao: 1,
+      ano: 1
+    }
+  },
+  {
+    $group: {
+      _id: '$regiao',
+      dados: {
+        $push: {
+          ano: '$ano',
+          taxa_homicidio: '$taxa_homicidio'
+        }
+      }
+    }
+  },
+  {
+    $project: {
+      _id: 0,
+      regiao: '$_id',
+      dados: 1
+    }
+  }
+];
+
+    const resultado = await Homicide.aggregate(pipeline1).exec();
+    res.json(resultado);
+  } catch (error: any) {
+    res.status(500).json({
+      message: 'Erro ao consultar taxas de homicídio por região',
+      error: error.message
+    });
+  }
+};

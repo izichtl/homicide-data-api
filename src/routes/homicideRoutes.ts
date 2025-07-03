@@ -1,5 +1,5 @@
 import express from 'express';
-import { getHomicidesByYearAndLocation } from '../controllers/homicideController';
+import { getHomicidesByYearAndLocation, getTaxaHomicidiosPorRegiao } from '../controllers/homicideController';
 
 const router = express.Router();
 /**
@@ -28,5 +28,16 @@ const router = express.Router();
  *         description: Lista de registros.
  */
 router.get("/homicidios", getHomicidesByYearAndLocation);
+
+/**
+ * @swagger
+ * /homicidios/regions:
+ *   get:
+ *     summary: Retorna dados de homicídios para todas as regiões.
+ *     responses:
+ *       200:
+ *         description: Lista de registros.
+ */
+router.get("/homicidios/regioes", getTaxaHomicidiosPorRegiao);
 
 export default router;
